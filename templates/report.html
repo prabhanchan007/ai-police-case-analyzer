@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case Report - AI Police Case Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <span class="badge">Educational Prototype</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="toolbar">
+      <!-- Sends the entered values back so the form can be edited -->
+      <form method="post" action="{{ url_for('index') }}" id="back-form">
+        {% for k, v in form.items() %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}
+        <button type="submit" class="btn btn-light">Back to Case Form</button>
+      </form>
+      <div class="toolbar-right">
+        <button type="button" class="btn btn-primary" id="pdf-btn">Download PDF</button>
+        <button type="button" class="btn btn-primary" id="png-btn">Download Image</button>
+      </div>
+    </div>
+    <p class="export-msg" id="export-msg" role="status"></p>
+
+    <!-- Everything inside #report is what gets exported to PDF / PNG -->
+    <article id="report" class="report" data-case-ref="{{ form.case_ref or 'case-report' }}">
+
+      <section class="rsec rsec-head">
+        <p class="report-kicker">AI Police Case Analyzer &amp; Legal Section Recommender</p>
+        <h1>Case Analysis Report</h1>
+        <div class="meta-row">
+          <div><span class="k">Case reference no.</span><span class="v">{{ form.case_ref or not_provided }}</span></div>
+          <div><span class="k">Generated on</span><span class="v">{{ generated_on }}</span></div>
+          <div><span class="k">Report status</span><span class="v status">Draft — Requires Review</span></div>
+        </div>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">1</span> Case Summary</h2>
+        <p>{{ summary }}</p>
+        <p class="small">This summary is built only from the information entered in the form.</p>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">2</span> Incident Details</h2>
+        <table class="kv">
+          <tr><th>Date</th><td>{{ form.incident_date or not_provided }}</td></tr>
+          <tr><th>Time</th><td>{{ form.incident_time or not_provided }}</td></tr>
+          <tr><th>Location</th><td>{{ form.location or not_provided }}</td></tr>
+          <tr><th>Police station</th><td>{{ form.station or not_provided }}</td></tr>
+          <tr><th>Reporting officer</th><td>{{ form.officer or not_provided }}</td></tr>
+          <tr><th>Type of incident (as entered)</th><td>{{ form.incident_type or not_provided }}</td></tr>
+          <tr><th>Description</th><td class="pre">{{ form.description or 'Not provided (requires clarification)' }}</td></tr>
+          <tr><th>Circumstances</th><td class="pre">{{ form.circumstances or not_provided }}</td></tr>
+        </table>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">3</span> Persons Involved</h2>
+        <table class="kv">
+          <tr><th>Complainant</th><td class="pre">{{ form.complainant or not_provided }}</td></tr>
+          <tr><th>Suspect</th><td class="pre">{{ form.suspect or not_provided }}</td></tr>
+          <tr><th>Witnesses</th><td class="pre">{{ form.witness or not_provided }}</td></tr>
+        </table>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">4</span> Identified Case Category</h2>
+        {% if analysis.status == 'matched' %}
+          <p class="small">Possible categories based on keyword rules (not proof that an offence occurred):</p>
+          {% for c in analysis.candidates %}
+          <div class="cand">
+            <h3>{{ c.name }} <span class="tag">{{ c.strength }}</span></h3>
+            <p><strong>Matched keywords:</strong> {{ c.matched | join(', ') }}</p>
+            <p>{{ c.reason }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="callout">{{ analysis.message }}</p>
+        {% endif %}
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">5</span> Potentially Applicable Legal Sections</h2>
+        {% set ns = namespace(any=false) %}
+        {% for c in analysis.candidates %}{% if c.legal_refs %}{% set ns.any = true %}{% endif %}{% endfor %}
+        {% if ns.any %}
+          {% for c in analysis.candidates %}
+            {% for ref in c.legal_refs %}
+            <div class="legal">
+              <h3>{{ ref.section }} — {{ ref.title }}</h3>
+              <table class="kv">
+                <tr><th>Legislation</th><td>{{ ref.act }}</td></tr>
+                <tr><th>Jurisdiction</th><td>{{ ref.jurisdiction }}</td></tr>
+                <tr><th>Linked category</th><td>{{ c.name }}</td></tr>
+                <tr><th>Source</th><td>{{ ref.source }}</td></tr>
+                <tr><th>Last verified</th><td>{{ ref.last_verified }}</td></tr>
+              </table>
+              <p class="small">{{ ref.verification_note }}</p>
+            </div>
+            {% endfor %}
+          {% endfor %}
+        {% else %}
+          <p class="callout">No legal provisions are suggested because no category could be reliably identified.</p>
+        {% endif %}
+        <p class="notice">Legal provisions are suggestions for review only. Verify the current applicable law and complete facts before relying on this report.</p>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">6</span> Reasons for Each Recommendation</h2>
+        {% if analysis.status == 'matched' %}
+          <ul>
+          {% for c in analysis.candidates %}
+            {% for ref in c.legal_refs %}
+            <li><strong>{{ ref.section }} ({{ ref.title }}):</strong> {{ ref.why }}</li>
+            {% endfor %}
+          {% endfor %}
+          </ul>
+        {% else %}
+          <p>Not applicable. No recommendation was made.</p>
+        {% endif %}
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">7</span> Evidence Summary</h2>
+        <table class="kv">
+          <tr><th>Available evidence</th><td class="pre">{{ form.evidence or not_provided }}</td></tr>
+          <tr><th>Additional observations</th><td class="pre">{{ form.observations or not_provided }}</td></tr>
+        </table>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">8</span> Recommended Next Steps for the Officer to Consider</h2>
+        <ol>
+          {% for s in steps %}<li>{{ s }}</li>{% endfor %}
+        </ol>
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">9</span> Missing Information / Facts Requiring Clarification</h2>
+        {% if missing %}
+          <ul>{% for m in missing %}<li>{{ m }}</li>{% endfor %}</ul>
+        {% else %}
+          <p>No missing fields were detected in the form.</p>
+        {% endif %}
+      </section>
+
+      <section class="rsec">
+        <h2><span class="num">10</span> Verification and Review Notice</h2>
+        <p class="notice">
+          This is a DRAFT generated by an educational prototype using simple keyword rules.
+          It is not an officially approved police system and does not provide final legal
+          decisions. It does not state that any person is guilty. All content must be
+          reviewed by an authorised officer, and the current applicable law and complete
+          facts must be verified before relying on this report.
+        </p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">Educational prototype. Legal provisions are suggestions for review only.</div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/html2canvas.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jspdf.umd.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

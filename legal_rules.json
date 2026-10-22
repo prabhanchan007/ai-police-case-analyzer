@@ -1,0 +1,124 @@
+{
+  "_about": "Rule and legal reference dataset for the AI Police Case Analyzer (educational prototype). Edit this file to add or change categories, keywords or legal entries. Keywords are matched against the lowercase incident text; a keyword also matches common endings (s, es, ed, en, ing, ly).",
+  "settings": {
+    "min_words_for_analysis": 5
+  },
+  "categories": [
+    {
+      "id": "theft",
+      "name": "Theft-related",
+      "keywords": ["stole", "steal", "stolen", "theft", "thief", "snatch", "snatched", "pickpocket", "burglary", "burgle", "shoplift", "robbed", "taken without permission", "taken without consent"],
+      "additional_facts": [
+        "Who owns or possesses the property, and what is its approximate value?",
+        "Was the property taken dishonestly and without the owner's consent? (Facts needed, not assumed.)",
+        "Was force, threat or entry into a house involved? (This may point to a different category.)"
+      ],
+      "legal_refs": [
+        {
+          "act": "Bharatiya Nyaya Sanhita, 2023 (BNS)",
+          "jurisdiction": "India (central law, in force from 1 July 2024; replaced the Indian Penal Code, 1860)",
+          "section": "Section 303",
+          "title": "Theft",
+          "why": "Suggested for review because the text describes property being taken. Whether the elements of theft are met depends on the facts (ownership, intention, consent).",
+          "source": "Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023) - India Code / eGazette of India",
+          "last_verified": "2026-10-22",
+          "verification_note": "Section number cross-checked against several secondary summaries and IPC-to-BNS conversion tables. Read the official bare text before relying on it."
+        }
+      ]
+    },
+    {
+      "id": "assault",
+      "name": "Assault-related (physical harm)",
+      "keywords": ["assault", "assaulted", "beat", "beaten", "hit", "punch", "punched", "slap", "slapped", "kick", "kicked", "attack", "attacked", "injure", "injured", "injury", "hurt", "wound", "wounded", "fight", "stabbed", "bleeding"],
+      "additional_facts": [
+        "Nature and extent of any injury (a medical examination or report may be relevant).",
+        "Whether any weapon or object was used.",
+        "Sequence of events and whether anyone provoked the incident.",
+        "Whether the injury could be serious (this may change the category)."
+      ],
+      "legal_refs": [
+        {
+          "act": "Bharatiya Nyaya Sanhita, 2023 (BNS)",
+          "jurisdiction": "India (central law, in force from 1 July 2024; replaced the Indian Penal Code, 1860)",
+          "section": "Section 115",
+          "title": "Voluntarily causing hurt",
+          "why": "Suggested for review because the text mentions physical harm or injury. Whether hurt was voluntarily caused, and how serious it was, needs medical and factual confirmation.",
+          "source": "Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023) - India Code / eGazette of India",
+          "last_verified": "2026-10-22",
+          "verification_note": "Section number cross-checked against several secondary summaries and IPC-to-BNS conversion tables. Grievous hurt and other related provisions are NOT covered by this prototype."
+        }
+      ]
+    },
+    {
+      "id": "fraud",
+      "name": "Fraud-related",
+      "keywords": ["fraud", "cheat", "cheated", "cheating", "scam", "scammed", "fake", "forged", "deceive", "deceived", "deception", "impersonate", "impersonated", "phishing", "otp", "fake website", "false promise", "duped", "swindle"],
+      "additional_facts": [
+        "What false statement or deception is alleged, and when was it made?",
+        "Did the complainant hand over money or property because of it? How much, and how?",
+        "Records such as transaction details, messages or receipts that support the account."
+      ],
+      "legal_refs": [
+        {
+          "act": "Bharatiya Nyaya Sanhita, 2023 (BNS)",
+          "jurisdiction": "India (central law, in force from 1 July 2024; replaced the Indian Penal Code, 1860)",
+          "section": "Section 318",
+          "title": "Cheating",
+          "why": "Suggested for review because the text mentions deception or fraud. Cheating requires deception and dishonest inducement, which must be established from the facts.",
+          "source": "Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023) - India Code / eGazette of India",
+          "last_verified": "2026-10-22",
+          "verification_note": "Section number cross-checked against several secondary summaries and IPC-to-BNS conversion tables. Online or cyber fraud may also involve other laws not covered here."
+        }
+      ]
+    },
+    {
+      "id": "threat",
+      "name": "Threat-related (intimidation)",
+      "keywords": ["threat", "threaten", "threatened", "threatening", "intimidate", "intimidated", "intimidation", "blackmail", "warned me", "will kill", "will harm", "will hurt", "extort", "extortion", "life threat"],
+      "additional_facts": [
+        "The exact words or messages used, and the medium (in person, phone, message).",
+        "Whom the threat was directed at and what harm was threatened.",
+        "Whether the threat was meant to cause alarm or to make someone do or stop doing something.",
+        "Any immediate safety risk to the complainant."
+      ],
+      "legal_refs": [
+        {
+          "act": "Bharatiya Nyaya Sanhita, 2023 (BNS)",
+          "jurisdiction": "India (central law, in force from 1 July 2024; replaced the Indian Penal Code, 1860)",
+          "section": "Section 351",
+          "title": "Criminal intimidation",
+          "why": "Suggested for review because the text mentions threats or intimidation. The exact words, intent and context must be confirmed.",
+          "source": "Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023) - India Code / eGazette of India",
+          "last_verified": "2026-10-22",
+          "verification_note": "Section number cross-checked against several secondary summaries and IPC-to-BNS conversion tables."
+        }
+      ]
+    },
+    {
+      "id": "property_damage",
+      "name": "Property damage",
+      "keywords": ["damage", "damaged", "vandal", "vandalised", "vandalized", "vandalism", "broke", "broken", "smashed", "destroyed", "set fire", "burnt", "burned", "defaced", "scratched vehicle", "mischief"],
+      "additional_facts": [
+        "What property was damaged, who owns it and what is the approximate loss?",
+        "Whether the damage looks deliberate or accidental.",
+        "Photographs or other records of the damage."
+      ],
+      "legal_refs": [
+        {
+          "act": "Bharatiya Nyaya Sanhita, 2023 (BNS)",
+          "jurisdiction": "India (central law, in force from 1 July 2024; replaced the Indian Penal Code, 1860)",
+          "section": "Section 324",
+          "title": "Mischief",
+          "why": "Suggested for review because the text mentions damage to property. Mischief depends on intention or knowledge of causing loss or damage, which needs factual confirmation.",
+          "source": "Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023) - India Code / eGazette of India",
+          "last_verified": "2026-10-22",
+          "verification_note": "Section number cross-checked against several secondary summaries and IPC-to-BNS conversion tables. Sub-sections and aggravated forms are NOT covered by this prototype."
+        }
+      ]
+    }
+  ],
+  "urgent_keywords": {
+    "medical": ["injured", "injury", "bleeding", "unconscious", "hospital", "wound", "wounded", "stabbed", "fracture", "medical"],
+    "safety": ["weapon", "knife", "gun", "firearm", "acid", "threatened", "will kill", "armed", "still at large and dangerous"]
+  }
+}

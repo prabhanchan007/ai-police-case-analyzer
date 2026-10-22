@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Police Case Analyzer &amp; Legal Section Recommender</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <span class="badge">Educational Prototype</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>AI Police Case Analyzer &amp; Legal Section Recommender</h1>
+      <p>
+        Enter the available details of an incident. The application uses simple keyword
+        rules to suggest possible case categories and legal provisions for review, and
+        prepares an organised draft case report.
+      </p>
+      <p class="note">
+        This is a college mini project, not an official police system. Its suggestions are
+        not legal decisions. Please use fictional data only.
+      </p>
+    </section>
+
+    {% if errors %}
+    <div class="alert" role="alert">
+      <strong>Please fix the following:</strong>
+      <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+
+    <form id="case-form" method="post" action="{{ url_for('report') }}" novalidate>
+
+      <section class="card">
+        <h2>A. Basic Case Information</h2>
+        <div class="grid">
+          <label>Case reference number
+            <input type="text" name="case_ref" maxlength="50" placeholder="e.g. FIC-2026-001" value="{{ values.get('case_ref','') }}">
+          </label>
+          <label>Incident date
+            <input type="date" name="incident_date" max="{{ today }}" value="{{ values.get('incident_date','') }}">
+          </label>
+          <label>Incident time (if known)
+            <input type="time" name="incident_time" value="{{ values.get('incident_time','') }}">
+          </label>
+          <label>Incident location
+            <input type="text" name="location" maxlength="200" value="{{ values.get('location','') }}">
+          </label>
+          <label>Police station name
+            <input type="text" name="station" maxlength="120" value="{{ values.get('station','') }}">
+          </label>
+          <label>Reporting officer designation
+            <input type="text" name="officer" maxlength="120" placeholder="e.g. Sub-Inspector" value="{{ values.get('officer','') }}">
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>B. Incident Information</h2>
+        <label>Type of incident (if known)
+          {% set t = values.get('incident_type','') %}
+          <select name="incident_type">
+            <option value="">Not sure / leave blank</option>
+            {% for opt in ['Theft','Assault','Fraud','Threat','Property damage','Other'] %}
+            <option value="{{ opt }}" {% if t == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Detailed incident description
+          <textarea name="description" rows="5" maxlength="3000" placeholder="Describe what happened, in the officer's own words.">{{ values.get('description','') }}</textarea>
+        </label>
+        <label>Circumstances surrounding the incident
+          <textarea name="circumstances" rows="3" maxlength="3000">{{ values.get('circumstances','') }}</textarea>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>C. Persons Involved</h2>
+        <label>Complainant details
+          <textarea name="complainant" rows="2" maxlength="1000" placeholder="Use fictional details only.">{{ values.get('complainant','') }}</textarea>
+        </label>
+        <label>Suspect details (if known and appropriate)
+          <textarea name="suspect" rows="2" maxlength="1000">{{ values.get('suspect','') }}</textarea>
+        </label>
+        <label>Witness information (if available)
+          <textarea name="witness" rows="2" maxlength="1000">{{ values.get('witness','') }}</textarea>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>D. Evidence Information</h2>
+        <label>Description of available evidence
+          <textarea name="evidence" rows="3" maxlength="2000">{{ values.get('evidence','') }}</textarea>
+        </label>
+        <label>Additional observations
+          <textarea name="observations" rows="3" maxlength="2000">{{ values.get('observations','') }}</textarea>
+        </label>
+      </section>
+
+      <p class="hint">All fields are optional. Leave unknown information blank.</p>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" id="generate-btn">Generate Case Report</button>
+        <button type="button" class="btn btn-light" id="sample-btn">Fill Fictional Sample Data</button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="container">Educational prototype. Legal provisions are suggestions for review only.</div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
